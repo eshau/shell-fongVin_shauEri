@@ -7,7 +7,7 @@ endif
 all: shell.o
 	$(CC) -o shell shell.o
 
-shell.o: shell.c shell.h
+shell.o: shell.c
 	$(CC) -c shell.c
 
 run:
