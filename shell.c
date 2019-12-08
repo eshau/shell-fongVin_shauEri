@@ -4,46 +4,22 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-void parse_command( int i, int argc, char * argv[], char * command[] );
+char ** parse_command( int i, int argc, char * argv[]);
 void run_command( int i, int argc, char * argv[] );
 
-void parse_command( int i, int argc, char * argv[], char * command[] ){
-  printf("ok3\n");
+char ** parse_command( int i, int argc, char * argv[]){
+  char ** command = malloc(6 * sizeof(char *));
   int c_i = 0;
-  strcpy(command[c_i], "POLARBEAR");
-  printf("command[c_i] : %s\n", command[c_i]);
   while (i < argc && strcmp(argv[i], ";")){
-    printf("i : %d   c_i : %d   argv[i] : %s\n", i, c_i, argv[i]);
-    printf("argv[i] : %s\n", argv[i]);
-    strcpy(command[c_i], argv[i]);
-    printf("command[c_i] : %s\n", command[c_i]);
+    command[c_i] = argv[i];
     c_i++;
     i++;
   }
+  return command;
 }
 
 void run_command( int i, int argc, char * argv[] ){
-  char * command[6];
-  printf("ok1\n");
-  // parse_command(i, argc, argv, command);
-  printf("ok3\n");
-  int c_i = 0;
-  strcpy(command[c_i], "POLARBEAR");
-  printf("command[c_i] : %s\n", command[c_i]);
-  while (i < argc && strcmp(argv[i], ";")){
-    printf("i : %d   c_i : %d   argv[i] : %s\n", i, c_i, argv[i]);
-    printf("argv[i] : %s\n", argv[i]);
-    strcpy(command[c_i], argv[i]);
-    printf("command[c_i] : %s\n", command[c_i]);
-    c_i++;
-    i++;
-  }
-  printf("ok2\n");
-  int j = 0;
-  while (command[j]){
-    printf("%d : %s\n", j, command[j]);
-    j++;
-  }
+  char ** command = parse_command(i, argc, argv);
   execvp(command[0], command);
 }
 
@@ -52,17 +28,22 @@ int main(int argc, char * argv[]){
     for (int i = 1; i < argc; i++){
       int pid = fork();
       if (pid == 0){
-        printf("I'm a child\n");
-        printf("%d\n", i);
-        if (i == 1 || strcmp(argv[i - 1], ";")){
+        // printf("I'm a child : %d\n", getpid());
+        // printf("i : %d\n", i);
+        // printf("argv[i - 1] : %s\n", argv[i - 1]);
+        // printf("argv[i] : %s\n", argv[i]);
+        // printf("strcmp : %d\n", strcmp(argv[i - 1], ";"));
+        if (i == 1 || !strcmp(argv[i - 1], ";")){
           run_command(i, argc, argv);
         }
+        // printf("That's a yikes\n");
+        exit(0);
       }
       else{
         wait(NULL);
+        printf("I'm the parent who's gonna mess up their lives\n");
       }
     }
-    printf("Running parse_command on the invocation...\n");
   }
   // char * cur;
   // cur = argv[1];
