@@ -4,16 +4,16 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-char ** parse_command( int i, char * argv[]);
-void run_command( int i, char * argv[] );
-void run_commands( char * argv[] );
+char ** parse_command( int i, char * args[]);
+void run_command( int i, char * args[] );
+void run_commands( char * args[] );
 void handle_line();
-void find_commands( char * line, char * argv[] );
+void find_commands( char * line, char * args[] );
 
-char ** parse_command( int i, char * argv[] ){
+char ** parse_command( int i, char * args[] ){
   char ** command = calloc(6, sizeof(char *));
   int c_i = 0;
-  char * input = argv[i];
+  char * input = args[i];
   char * cur = strsep(&input, " ");
   while (cur){
     if (strlen(cur)){
@@ -25,8 +25,8 @@ char ** parse_command( int i, char * argv[] ){
   return command;
 }
 
-void run_command( int i, char * argv[] ){
-  char ** command = parse_command(i, argv);
+void run_command( int i, char * args[] ){
+  char ** command = parse_command(i, args);
   int x = 0;
   while (command[x]){
     x++;
@@ -35,6 +35,7 @@ void run_command( int i, char * argv[] ){
     int num = 0;
     if (command[1]){
       sscanf(command[1], "%d", &num);
+      printf("%d\n", num);
     }
     exit(num);
   }
@@ -59,23 +60,23 @@ void run_command( int i, char * argv[] ){
   }
 }
 
-void run_commands( char * argv[] ){
+void run_commands( char * args[] ){
   int i = 0;
-  while (argv[i]){
-      run_command(i, argv);
-      i++;
+  while (args[i]){
+    run_command(i, args);
+    i++;
   }
 }
 
-void find_commands( char * line, char * argv[] ){
+void find_commands( char * line, char * args[] ){
   char * cur = strsep(&line, ";");
   int i = 0;
   while (cur) {
-    argv[i] = cur;
+    args[i] = cur;
     cur = strsep(&line, ";");
     i++;
   }
-  argv[i] = '\0';
+  args[i] = '\0';
 }
 
 void handle_line(){
@@ -86,9 +87,9 @@ void handle_line(){
   }
   fgets(line, 256, stdin);
   line[strlen(line) - 1] = '\0';
-  char * argv[50];
-  find_commands(line, argv);
-  run_commands(argv);
+  char * args[50];
+  find_commands(line, args);
+  run_commands(args);
   handle_line();
 }
 
