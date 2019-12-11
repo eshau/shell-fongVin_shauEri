@@ -7,9 +7,8 @@
 char ** parse_command( int i, char * argv[]);
 void run_command( int i, char * argv[] );
 void run_commands( char * argv[] );
-void handleLine();
-int is_number( char * string );
-void space_split( char * line, char * argv[] );
+void handle_line();
+void find_commands( char * line, char * argv[] );
 
 char ** parse_command( int i, char * argv[] ){
   char ** command = calloc(6, sizeof(char *));
@@ -28,51 +27,42 @@ char ** parse_command( int i, char * argv[] ){
 
 void run_command( int i, char * argv[] ){
   char ** command = parse_command(i, argv);
-  int j;
-  for (j = 0; command[j]; j++){
-    printf("%s\n", command[j]);
-    if (!strcmp(command[j], "exit")){
-      if (is_number(command[j + 1])){
-        printf("ok\n");
-        kill(getppid(), sscanf("%d", command[j + 1]));
-        exit(sscanf("%d", command[j + 1]));
-      }
-      else{
-        printf("not ok\n");
-        kill(getppid(), SIGKILL);
-        exit(0);
+  int x = 0;
+  while (command[x]){
+    x++;
+  }
+  if (!strcmp(command[0], "exit")){
+    int num = 0;
+    if (command[1]){
+      sscanf(command[1], "%d", &num);
+    }
+    exit(num);
+  }
+  else if (!strcmp(command[0], "cd")){
+    char directory[100] = "..";
+    if (command[1]){
+      strcpy(directory, command[1]);
+    }
+    chdir(directory);
+  }
+  else{
+    int pid = fork();
+    if (pid == 0){
+      int result = execvp(command[0], command);
+      if (result < 0){
+        printf("result: %s\n", strerror(result));
       }
     }
-    if (!strcmp(command[j], "cd")){
-      char * directory = "..";
-      if (command[j + 1]){
-        strcpy(directory, command[j + 1]);
-      }
-      chdir(directory);
+    else{
+      wait(NULL);
     }
   }
-  int result = execvp(command[0], command);
-  if (result < 0){
-    printf("result: %s\n", strerror(result));
-  }
-}
-
-int is_number( char * string ){
-  return sscanf("%d", string);
 }
 
 void run_commands( char * argv[] ){
   int i = 0;
   while (argv[i]){
-      int pid = 1;
-      pid = fork();
-      if (pid == 0){
-        run_command(i, argv);
-      }
-      else{
-        int status;
-        wait(&status);
-      }
+      run_command(i, argv);
       i++;
   }
 }
@@ -85,12 +75,10 @@ void find_commands( char * line, char * argv[] ){
     cur = strsep(&line, ";");
     i++;
   }
-  if (i > 0){
-    argv[i + 1] = '\0';
-  }
+  argv[i] = '\0';
 }
 
-void handleLine(){
+void handle_line(){
   char line[256];
   int i;
   for (i = 0; i < 256; i++){
@@ -101,10 +89,10 @@ void handleLine(){
   char * argv[50];
   find_commands(line, argv);
   run_commands(argv);
-  handleLine();
+  handle_line();
 }
 
 int main(){
-  handleLine();
+  handle_line();
   return 0;
 }
