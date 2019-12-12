@@ -4,22 +4,22 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
-char ** parse_command(char * input);
+char ** parse_command(char * input, char * sep);
 void run_command(char * input);
 // void run_commands( char * args[] );
 void handle_line();
 void find_commands( char * line, char * args[] );
 
-char ** parse_command(char * input){
+char ** parse_command(char * input, char * sep) {
   char ** command = calloc(6, sizeof(char *));
   int c_i = 0;
-  char * cur = strsep(&input, " ");
+  char * cur = strsep(&input, sep);
   while (cur){
     if (strlen(cur)){
       command[c_i] = cur;
       c_i++;
     }
-    cur = strsep(&input, " ");
+    cur = strsep(&input, sep);
   }
   return command;
 }
@@ -38,7 +38,7 @@ void redir_in(char * input_prompt) {
 }
 
 void run_command(char * input_prompt){
-  char ** command = parse_command(input_prompt);
+  char ** command = parse_command(input_prompt, " ");
   int x = 0;
   while (command[x]){
     x++;
