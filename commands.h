@@ -9,6 +9,7 @@
 int cd_exit(char * input);
 int redir_in(char * input);
 int redir_out(char * input);
+int redir_inout(char * input);
 int pipes(char * input);
 void run_command(char * input);
 void process_commands(char * line, char * args[]);

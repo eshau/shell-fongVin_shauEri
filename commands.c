@@ -60,8 +60,8 @@ int redir_out(char * input) {
                                 i++;
                         }
                         dup2(fd, STDOUT_FILENO);
-                        char ** commands = parse(args[0], " ");
 
+                        char ** commands = parse(args[0], " ");
                         int error = execvp(commands[0], commands);
                         if (error == -1) {
                                 printf("%s : Nice going, you messed up somewhere!\n", args[0]);
@@ -70,6 +70,36 @@ int redir_out(char * input) {
                 }
                 else wait(NULL);
                 return 1;
+        }
+        else return 0;
+}
+
+int redir_inout(char * input) {
+        if (strchr(input, '<') && strchr(input, '>')) {
+                char ** args = parse(input, "<>");
+                if (!fork()) {
+                        int fdr;
+                        int fdw;
+                        char* filename;
+
+                        fdr = open(strip(args[1]), O_RDONLY);
+                        fdw = open(strip(args[2]), O_WRONLY | O_CREAT, 0644);
+                        if (fdr == -1) printf("%s\n", strerror(errno));
+                        if (fdw == -1) printf("%s\n", strerror(errno));
+
+                        dup2(fdr, STDIN_FILENO);
+                        dup2(fdw, STDOUT_FILENO);
+
+                        char ** commands = parse(args[0], " ");
+                        int error = execvp(commands[0], commands);
+                        if (error == -1) {
+                                printf("%s : Nice going, you messed up somewhere!\n", args[0]);
+                                printf("%s\n", strerror(errno));
+                        }
+                }
+                else wait(NULL);
+                return 1;
+
         }
         else return 0;
 }
@@ -114,22 +144,56 @@ int pipes(char * input) {
 void run_command(char * input) {
         char * i_copy = calloc(sizeof(char), 1024);
         strcpy(i_copy, input);
+        char * j_copy = calloc(sizeof(char), 1024);
+        strcpy(j_copy, input);
+        char * k_copy = calloc(sizeof(char), 1024);
+        strcpy(k_copy, input);
+        char * l_copy = calloc(sizeof(char), 1024);
+        strcpy(l_copy, input);
+        char * m_copy = calloc(sizeof(char), 1024);
+        strcpy(m_copy, input);
 
-        int x = 0;
-        if (cd_exit(input)) {
+        if (cd_exit(i_copy)) {
                 free(i_copy);
+                free(j_copy);
+                free(k_copy);
+                free(l_copy);
+                free(m_copy);
                 return;
-        } else if (pipes(i_copy)) {
+        } else if (pipes(j_copy)) {
                 free(i_copy);
+                free(j_copy);
+                free(k_copy);
+                free(l_copy);
+                free(m_copy);
                 return;
-        } else if (redir_in(i_copy)) {
+        } else if (redir_inout(k_copy)) {
                 free(i_copy);
+                free(j_copy);
+                free(k_copy);
+                free(l_copy);
+                free(m_copy);
                 return;
-        } else if (redir_out(i_copy)) {
+        } else if (redir_in(l_copy)) {
                 free(i_copy);
+                free(j_copy);
+                free(k_copy);
+                free(l_copy);
+                free(m_copy);
+                return;
+        } else if (redir_out(m_copy)) {
+                free(i_copy);
+                free(j_copy);
+                free(k_copy);
+                free(l_copy);
+                free(m_copy);
                 return;
         } else {
                 free(i_copy);
+                free(j_copy);
+                free(k_copy);
+                free(l_copy);
+                free(m_copy);
                 char ** command = parse(input, " ");
                 if (!fork()) {
                         int result = execvp(command[0], command);

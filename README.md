@@ -15,11 +15,12 @@ Written by Eric Shau and Vincent Fong, pd 5
 - A prompt! Has username and cwd, and simple coloring (much thanks to hint from Mr. DW)
 - Executes commands
 - Can run multiple commands separated by semicolons
-- Can handle redirects (with or without spaces)
+- Can handle single redirects (with or without spaces)
+- Can handle the multi redirect given in the example. Also disregards spaces
 - Can handle single pipes (with or without spaces)
 
 ## Attempted (but failed, spectacularly)
-- Double redirects
+- Generalization of mutli-redirects (my idea was to have an array of the order in which they show up, and based on that array, dup accordingly. Not that I really have time for it.)
 - Command history
 - Tab completion
 
@@ -41,7 +42,7 @@ Written by Eric Shau and Vincent Fong, pd 5
 ### commands.c
 `int cd_exit(char * input)`\
         - return: 1 if successful, 0 if not\
-        - functionality: if `cd` or `exit` detected, changes directory or exits appropiately
+        - functionality: if `cd` or `exit` detected, changes directory or exits appropriately
 
 `int redir_in(char * input)`\
         - return: 1 if successful, 0 if not\
@@ -50,6 +51,10 @@ Written by Eric Shau and Vincent Fong, pd 5
 `int redir_out(char * input)`\
         - return: 1 if successful, 0 if not\
         - functionality: if `>` detected, redirects output into a file
+
+`int redir_inout(char * input)`\
+        - return: 1 if successful, 0 if not\
+        - functionality: if `<` and `>` detected, redirects accordingly
 
 `int pipes(char * input)`\
         - return: 1 if successful, 0 if not\
