@@ -100,59 +100,44 @@ int redir_out(char * input) {
         else return 0;
 }
 
+int pipes(char * input) {
+        return 0;
+}
+
 void run_command(char * input) {
         // TBH I don't know why but after parse_command is done, new copies of the input are needed. Ask Eric lol
-        char * r_in = calloc(sizeof(char), 1024);
-        strcpy(r_in, input);
-        char * r_out = calloc(sizeof(char), 1024);
-        strcpy(r_out, input);
-        char * p_exec = calloc(sizeof(char), 1024);
-        strcpy(p_exec, input);
+        char * i_copy = calloc(sizeof(char), 1024);
+        strcpy(i_copy, input);
 
         char ** command = parse_command(input, " ");
         int x = 0;
-        if (!strcmp(command[0], "exit")){
+        if (!strcmp(command[0], "exit")) {
                 int num = 0;
                 if (command[1]) {
                         sscanf(command[1], "%d", &num);
                 }
                 exit(num);
-        }
-        else if (!strcmp(command[0], "cd")){
+        } else if (!strcmp(command[0], "cd")){
                 char directory[100] = "..";
                 if (command[1]){
                         strcpy(directory, command[1]);
                 }
                 chdir(directory);
-        }
-        else if (pipes(p_exec)) {
-                free(r_in);
-                free(r_out);
-                free(p_exec);
+        } else if (pipes(i_copy)) {
+                free(i_copy);
                 return;
-        }
-        else if (redir_in(r_in)) {
-                free(r_in);
-                free(r_out);
-                free(p_exec);
+        } else if (redir_in(i_copy)) {
+                free(i_copy);
                 return;
-        }
-        else if (redir_out(r_out)) {
-                free(r_in);
-                free(r_out);
-                free(p_exec);
+        } else if (redir_out(i_copy)) {
+                free(i_copy);
                 return;
-        }
-        else {
-                if (!fork()){
+        } else {
+                if (!fork()) {
                         int result = execvp(command[0], command);
-                        if (result < 0){
-                                printf("result: %s\n", strerror(result));
-                        }
+                        if (result < 0) printf("result: %s\n", strerror(result));
                 }
-                else {
-                        wait(NULL);
-                }
+                else wait(NULL);
                 return;
         }
 }
@@ -178,11 +163,14 @@ void process_commands( char * line, char * args[] ) {
 }
 
 void handle_line() {
+        // zero init char array for line
         char line[256];
         int i;
         for (i = 0; i < 256; i++){
                 line[i] = '\0';
         }
+
+        // get from stdin
         fgets(line, 256, stdin);
         line[strlen(line) - 1] = '\0';
         char * args[50];

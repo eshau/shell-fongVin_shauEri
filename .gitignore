@@ -54,3 +54,5 @@ dkms.conf
 foo
 shell
 wholist
+com
+.DS_Store
