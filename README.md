@@ -30,42 +30,42 @@ Written by Eric Shau and Vincent Fong, pd 5
 ## Function headers
 
 ### aux.c
-`char ** parse(char * input, char * sep)`
-        - return: a string array of the input separated by the sep character
+`char ** parse(char * input, char * sep)`\
+        - return: a string array of the input separated by the sep character\
 
-`char ** trim(char * line)`
-        - return: the line trimmed of whitespace
+`char ** trim(char * line)`\
+        - return: the line trimmed of whitespace\
 
 ### commands.c
-`int redir_in(char * input)`
-        - return: 1 if successful, 0 if not
+`int redir_in(char * input)`\
+        - return: 1 if successful, 0 if not\
         - functionality: if `<` detected, redirects input from a file
 
-`int redir_out(char * input)`
-        - return:
+`int redir_out(char * input)`\
+        - return: 1 if successful, 0 if not\
         - functionality: if `>` detected, redirects output into a file
 
-`int pipes(char * input)`
-        - return: 1 if successful, 0 if not
+`int pipes(char * input)`\
+        - return: 1 if successful, 0 if not\
         - functionality: if `|` detected, pipes the output of one process as the input of another process
 
-`void run_command(char * input)`
-        - return: nothing
+`void run_command(char * input)`\
+        - return: nothing\
         - functionality: runs given command, has cases for `cd`/`exit`, `<`, `>`, `|`
 
-`void process_commands(char * line, char * args[])`
-        - return: nothing
+`void process_commands(char * line, char * args[])`\
+        - return: nothing\
         - functionality: separates commands by semicolon, runs each command with run_command
 
 ### shell.c
-`void handle_line()`
-        - return: nothing
+`void handle_line()`\
+        - return: nothing\
         - functionality: gets stdin and process_commands it
 
-`void print_host()`
-        - return: nothing
+`void print_host()`\
+        - return: nothing\
         - functionality: prints prompt with directory, user login, and colors!
 
-`void main()`
-        - return: technically 0 but never gets there
+`void main()`\
+        - return: technically 0 but never gets there\
         - functionality: loops handling the line and printing the host!
