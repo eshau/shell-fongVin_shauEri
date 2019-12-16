@@ -26,6 +26,8 @@ Written by Eric Shau and Vincent Fong, pd 5
 ## Bugs
 - Entering a new line terminates the program
 - Memory leaks... maybe
+- Don't do ;; in the prompt
+- (not really a bug but) cd defaults to going back to the directory that your directory is in
 
 ## Function headers
 
@@ -37,6 +39,10 @@ Written by Eric Shau and Vincent Fong, pd 5
         - return: the line trimmed of whitespace\
 
 ### commands.c
+`int cd_exit(char * input)`\
+        - return: 1 if successful, 0 if not\
+        - functionality: if `cd` or `exit` detected, changes directory or exits appropiately
+
 `int redir_in(char * input)`\
         - return: 1 if successful, 0 if not\
         - functionality: if `<` detected, redirects input from a file
