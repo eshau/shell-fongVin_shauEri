@@ -1,4 +1,13 @@
 # shell-fongVin_shauEri
+
+> "And God created great whales" - Genesis 1:21
+
+> "Who is this madman" [?] - New York Commercial Advertiser (November 28, 1851)
+
+> "[U]nfit for general circulation" - New York Methodist Quarterly Review (January 22, 1857)
+
+
+## Features and stuff
 Our shell reads one line at a time, first parsing by semicolons for individual commands and later by spaces for arguments.
 Using these individual arguments, we check if there is exit (and then we exit), cd (and then we change directory), or else we use execvp.
 We used exit() to exit directly from the parent and chdir() to change directories.

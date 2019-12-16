@@ -11,6 +11,7 @@ void process_commands(char * line, char * args[]);
 void run_command(char * input);
 int redir_in(char * input);
 int redir_out(char * input);
+int pipes(char * input);
 char ** parse_command(char * input, char * sep);
 char * strip(char * line);
 
@@ -105,6 +106,8 @@ void run_command(char * input) {
         strcpy(r_in, input);
         char * r_out = calloc(sizeof(char), 1024);
         strcpy(r_out, input);
+        char * p_exec = calloc(sizeof(char), 1024);
+        strcpy(p_exec, input);
 
         char ** command = parse_command(input, " ");
         int x = 0;
@@ -122,8 +125,24 @@ void run_command(char * input) {
                 }
                 chdir(directory);
         }
-        else if (redir_in(r_in)) return;
-        else if (redir_out(r_out)) return;
+        else if (pipes(p_exec)) {
+                free(r_in);
+                free(r_out);
+                free(p_exec);
+                return;
+        }
+        else if (redir_in(r_in)) {
+                free(r_in);
+                free(r_out);
+                free(p_exec);
+                return;
+        }
+        else if (redir_out(r_out)) {
+                free(r_in);
+                free(r_out);
+                free(p_exec);
+                return;
+        }
         else {
                 if (!fork()){
                         int result = execvp(command[0], command);
