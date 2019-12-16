@@ -12,10 +12,10 @@ void run_command(char * input);
 int redir_in(char * input);
 int redir_out(char * input);
 int pipes(char * input);
-char ** parse_command(char * input, char * sep);
+char ** parse(char * input, char * sep);
 char * strip(char * line);
 
-char ** parse_command(char * input, char * sep) {
+char ** parse(char * input, char * sep) {
         char ** command = calloc(6, sizeof(char *));
         int c_i = 0;
         char * cur = strsep(&input, sep);
@@ -48,7 +48,7 @@ char * strip(char * line) {
 
 int redir_in(char * input) {
         if (strchr(input, '<')) {
-                char ** args = parse_command(input, "<");
+                char ** args = parse(input, "<");
                 if (!fork()) {
                         int i = 1;
                         int fd;
@@ -59,7 +59,7 @@ int redir_in(char * input) {
                                 i++;
                         }
                         dup2(fd, STDIN_FILENO);
-                        char ** stuff = parse_command(args[0], " ");
+                        char ** stuff = parse(args[0], " ");
 
                         int error = execvp(stuff[0], stuff);
                         if (error == -1) {
@@ -75,7 +75,7 @@ int redir_in(char * input) {
 
 int redir_out(char * input) {
         if (strchr(input, '>')) {
-                char ** args = parse_command(input, ">");
+                char ** args = parse(input, ">");
                 if (!fork()) {
                         int i = 1;
                         int fd;
@@ -86,11 +86,11 @@ int redir_out(char * input) {
                                 i++;
                         }
                         dup2(fd, STDOUT_FILENO);
-                        char ** commands = parse_command(args[0], " ");
+                        char ** commands = parse(args[0], " ");
 
                         int error = execvp(commands[0], commands);
                         if (error == -1) {
-                                printf("%s : TNice going, you messed up somewhere!\n", args[0]);
+                                printf("%s : Nice going, you messed up somewhere!\n", args[0]);
                                 printf("%s\n", strerror(errno));
                         }
                 }
@@ -101,15 +101,48 @@ int redir_out(char * input) {
 }
 
 int pipes(char * input) {
-        return 0;
+        if (input[0] == '|') {
+                printf("| : not a command lol\n");
+                return 1;
+        }
+        if (strchr(input, '|')) {
+                if (!fork()) {
+                        int fds[2];
+                        pipe(fds);
+
+                        char** args = parse(input, "|");
+                        char** read = parse(args[0], " ");
+                        char** write = parse(args[1], " ");
+
+                        if (fork()) {
+                                close(fds[0]);
+                                dup2(fds[1], STDOUT_FILENO);
+                                execvp(read[0], read);
+                        } else {
+                                wait(NULL);
+                                close(fds[1]);
+                                dup2(fds[0], STDIN_FILENO);
+                                execvp(write[0], write);
+                        }
+
+                        free(args);
+                        free(read);
+                        free(write);
+                        close(fds[0]);
+                        close(fds[1]);
+                }
+                else wait(NULL);
+                return 1;
+        }
+        else return 0;
 }
 
 void run_command(char * input) {
-        // TBH I don't know why but after parse_command is done, new copies of the input are needed. Ask Eric lol
+        // TBH I don't know why but after parse is done, new copies of the input are needed. Ask Eric lol
         char * i_copy = calloc(sizeof(char), 1024);
         strcpy(i_copy, input);
 
-        char ** command = parse_command(input, " ");
+        char ** command = parse(input, " ");
         int x = 0;
         if (!strcmp(command[0], "exit")) {
                 int num = 0;
