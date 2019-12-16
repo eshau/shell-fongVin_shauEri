@@ -1,6 +1,25 @@
 #include "aux.h"
 #include "commands.h"
 
+int cd_exit(char * input) {
+        char ** command = parse(input, " ");
+        if (!strcmp(command[0], "exit")) {
+                int num = 0;
+                if (command[1]) {
+                        sscanf(command[1], "%d", &num);
+                }
+                exit(num);
+                return 1;
+        } else if (!strcmp(command[0], "cd")) {
+                char directory[100] = "..";
+                if (command[1]){
+                        strcpy(directory, command[1]);
+                }
+                chdir(directory);
+                return 1;
+        } else return 0;
+}
+
 int redir_in(char * input) {
         if (strchr(input, '<')) {
                 char ** args = parse(input, "<");
@@ -93,24 +112,13 @@ int pipes(char * input) {
 }
 
 void run_command(char * input) {
-        // TBH I don't know why but after parse is done, new copies of the input are needed. Ask Eric lol
         char * i_copy = calloc(sizeof(char), 1024);
         strcpy(i_copy, input);
 
-        char ** command = parse(input, " ");
         int x = 0;
-        if (!strcmp(command[0], "exit")) {
-                int num = 0;
-                if (command[1]) {
-                        sscanf(command[1], "%d", &num);
-                }
-                exit(num);
-        } else if (!strcmp(command[0], "cd")){
-                char directory[100] = "..";
-                if (command[1]){
-                        strcpy(directory, command[1]);
-                }
-                chdir(directory);
+        if (cd_exit(input)) {
+                free(i_copy);
+                return;
         } else if (pipes(i_copy)) {
                 free(i_copy);
                 return;
@@ -121,6 +129,8 @@ void run_command(char * input) {
                 free(i_copy);
                 return;
         } else {
+                free(i_copy);
+                char ** command = parse(input, " ");
                 if (!fork()) {
                         int result = execvp(command[0], command);
                         if (result < 0) printf("result: %s\n", strerror(result));

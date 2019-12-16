@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
+int cd_exit(char * input);
 int redir_in(char * input);
 int redir_out(char * input);
 int pipes(char * input);

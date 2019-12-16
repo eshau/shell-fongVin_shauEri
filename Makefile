@@ -6,6 +6,7 @@ endif
 
 all: shell.o commands.o aux.o
 	$(CC) -o shell shell.o commands.o aux.o
+	rm *.o
 
 shell.o: shell.c commands.h aux.h
 	$(CC) -c shell.c
