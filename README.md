@@ -12,15 +12,28 @@ Written by Eric Shau and Vincent Fong, pd 5
 > "[A] rather strained rhapsody with whaling for a subject and not a single sincere line." - Joseph Conrad (1907)
 
 ## Features
-Our shell reads one line at a time, first parsing by semicolons for individual commands and later by spaces for arguments.
-Using these individual arguments, we check if there is exit (and then we exit), cd (and then we change directory), or else we use execvp.
-We used exit() to exit directly from the parent and chdir() to change directories.
-If execvp fails, i.e. the command does not exist, we use kill() to SIGKILL the child and move on to the next command.
-Spaces between semicolons (e.g. ls;ls, ls ;ls, ls; ls, ls ; ls) doesn't matter in terms of getting output.
-But most importantly, we have a cool user thing in front of our commands!!! (Implemented by Vincent)
+- A prompt! Has username and cwd, and simple coloring (much thanks to hint from Mr. DW)
+- Executes commands
+- Can run multiple commands separated by semicolons
+- Can handle redirects (with or without spaces)
+- Can handle single pipes (with or without spaces)
 
-## Attempted (but miserably failed)
+## Attempted (but failed, spectacularly)
+- Double redirects
+- Command history
+- Tab completion
 
 ## Bugs
+- Entering a new line terminates the program
+- Memory leaks... maybe
 
 ## Function headers
+
+### aux.c
+```char ** parse(char * input, char * sep)
+```
+        - returns: a string array of the input separated by the sep character
+
+### commands.c
+
+### shell.c

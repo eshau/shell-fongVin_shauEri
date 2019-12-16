@@ -28,7 +28,7 @@ void handle_line() {
 void print_host() {
         if (isatty(STDIN_FILENO)) {
                 char * cwd = getcwd(NULL, 1024);
-                printf("\e[1;104m%s %s$\e[0m ", cwd, getlogin());
+                printf("\e[91m> \e[0;1;92m%s\e[0;1;91m: \e[0;96m%s\e[0;91m$\e[0m ", cwd, getlogin());
                 free(cwd);
         }
 }
