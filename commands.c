@@ -204,7 +204,7 @@ void run_command(char * input) {
         }
 }
 
-void process_commands( char * line, char * args[] ) {
+void process_commands(char * line, char * args[]) {
         // finding commands
         char * cur = strsep(&line, ";");
         int i = 0;
@@ -218,7 +218,7 @@ void process_commands( char * line, char * args[] ) {
         // running commands
         i = 0;
         while (args[i]) {
-                run_command(args[i]);
+                if (strcmp(args[i],"")) run_command(args[i]);
                 i++;
         }
 

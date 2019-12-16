@@ -20,7 +20,7 @@ void handle_line() {
         fgets(line, 256, stdin);
         line[strlen(line) - 1] = '\0';
         char * args[50];
-
+        
         process_commands(line, args);
 }
 

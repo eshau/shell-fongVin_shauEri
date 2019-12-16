@@ -25,7 +25,6 @@ Written by Eric Shau and Vincent Fong, pd 5
 - Tab completion
 
 ## Bugs
-- Entering a new line terminates the program
 - Memory leaks... maybe
 - Don't do ;; in the prompt
 - (not really a bug but) cd defaults to going back to the directory that your directory is in
