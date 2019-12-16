@@ -66,6 +66,7 @@ int redir_in(char * input) {
                                 printf("%s\n", strerror(errno));
                         }
                 }
+                else wait(NULL);
                 return 1;
         }
         else return 0;
@@ -92,6 +93,7 @@ int redir_out(char * input) {
                                 printf("%s\n", strerror(errno));
                         }
                 }
+                else wait(NULL);
                 return 1;
         }
         else return 0;
